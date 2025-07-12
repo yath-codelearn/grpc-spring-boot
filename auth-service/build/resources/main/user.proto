@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package user;
+
+option java_package = "asia.igsaas.grpc.user";
+option java_multiple_files = true;
+
+// ========== Entity ==========
+message User {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+}
+
+// ========== Request Messages ==========
+message CreateUserRequest {
+  string name = 1;
+  string email = 2;
+}
+
+message UpdateUserRequest {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+}
+
+message GetUserRequest {
+  string id = 1;
+}
+
+message DeleteUserRequest {
+  string id = 1;
+}
+
+message GetAllUsersRequest {}
+
+// ========== Response Messages ==========
+message UserResponse {
+  User user = 1;
+}
+
+message CreateUserResponse {
+  string id = 1;
+  string message = 2;
+}
+
+message UpdateUserResponse {
+  string message = 1;
+}
+
+message DeleteUserResponse {
+  string message = 1;
+}
+
+message GetAllUsersResponse {
+  repeated User users = 1;
+}
+
+// ========== Service ==========
+service UserService {
+  // Create
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+
+  // Read
+  rpc GetUser(GetUserRequest) returns (UserResponse);
+  rpc GetAllUsers(GetAllUsersRequest) returns (GetAllUsersResponse);
+
+  // Update
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
+
+  // Delete
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
+}
