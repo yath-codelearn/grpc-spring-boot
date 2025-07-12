@@ -27,10 +27,10 @@ This project showcases a microservices architecture with gRPC for inter-service 
 
 ```
 grpc-demo/
-├── auth-service/           # Authentication and user management service
+├── auth-service/
 │   ├── src/
 │   └── build.gradle
-├── customer-service/       # Customer management service
+├── customer-service/
 │   ├── src/
 │   └── build.gradle
 └── README.md
