@@ -14,39 +14,20 @@ public class UserGrpcServer extends UserServiceGrpc.UserServiceImplBase {
 
     private final Map<String, User> userStore = new HashMap<>();
 
-    public UserGrpcServer() {
-        String id1 = UUID.randomUUID().toString();
-        userStore.put(id1, User.newBuilder().setId(id1).setName("John").setEmail("john@doe.com").build());
-
-        String id2 = UUID.randomUUID().toString();
-        userStore.put(id2, User.newBuilder().setId(id2).setName("Jane").setEmail("jane@doe.com").build());
-
-        String id3 = UUID.randomUUID().toString();
-        userStore.put(id3, User.newBuilder().setId(id3).setName("Bob").setEmail("bob@doe.com").build());
-    }
-
     @Override
-    public void createUser(CreateUserRequest request,
-                           StreamObserver<CreateUserResponse> responseObserver) {
+    public void getAllUsers(GetAllUsersRequest request,
+                            StreamObserver<GetAllUsersResponse> responseObserver) {
         try {
-            String id = UUID.randomUUID().toString();
-            User user = User.newBuilder()
-                    .setId(id)
-                    .setName(request.getName())
-                    .setEmail(request.getEmail())
-                    .build();
-            System.out.println(user);
-            userStore.put(id, user);
+            List<User> users = new ArrayList<>(userStore.values());
 
-            responseObserver.onNext(CreateUserResponse.newBuilder()
-                    .setId(id)
-                    .setMessage("User created successfully")
+            responseObserver.onNext(GetAllUsersResponse.newBuilder()
+                    .addAllUsers(users)
                     .build());
             responseObserver.onCompleted();
 
         } catch (Exception e) {
             responseObserver.onError(Status.INTERNAL
-                    .withDescription("Error creating user: " + e.getMessage())
+                    .withDescription("Error fetching users: " + e.getMessage())
                     .asRuntimeException());
         }
     }
@@ -77,19 +58,82 @@ public class UserGrpcServer extends UserServiceGrpc.UserServiceImplBase {
     }
 
     @Override
-    public void getAllUsers(GetAllUsersRequest request,
-                            StreamObserver<GetAllUsersResponse> responseObserver) {
+    public void createUser(CreateUserRequest request,
+                           StreamObserver<CreateUserResponse> responseObserver) {
         try {
-            List<User> users = new ArrayList<>(userStore.values());
+            String id = UUID.randomUUID().toString();
+            User user = User.newBuilder()
+                    .setId(id)
+                    .setName(request.getName())
+                    .setEmail(request.getEmail())
+                    .build();
+            System.out.println(user);
+            userStore.put(id, user);
 
-            responseObserver.onNext(GetAllUsersResponse.newBuilder()
-                    .addAllUsers(users)
+            responseObserver.onNext(CreateUserResponse.newBuilder()
+                    .setId(id)
+                    .setMessage("User created successfully")
                     .build());
             responseObserver.onCompleted();
 
         } catch (Exception e) {
             responseObserver.onError(Status.INTERNAL
-                    .withDescription("Error fetching users: " + e.getMessage())
+                    .withDescription("Error creating user: " + e.getMessage())
+                    .asRuntimeException());
+        }
+    }
+
+
+    @Override
+    public void updateUser(UpdateUserRequest request,
+                           StreamObserver<UpdateUserResponse> responseObserver) {
+        try {
+            User user = userStore.get(request.getId());
+            if (user == null) {
+                responseObserver.onError(Status.NOT_FOUND
+                        .withDescription("User not found")
+                        .asRuntimeException());
+                return;
+            }
+            User updatedUser = User.newBuilder(user)
+                    .setName(request.getName())
+                    .setEmail(request.getEmail())
+                    .build();
+            userStore.put(request.getId(), updatedUser);
+
+            responseObserver.onNext(UpdateUserResponse.newBuilder()
+                    .setMessage("User updated successfully")
+                    .build());
+            responseObserver.onCompleted();
+
+        } catch (Exception e) {
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription("Error updating user: " + e.getMessage())
+                    .asRuntimeException());
+        }
+    }
+
+    @Override
+    public void deleteUser(DeleteUserRequest request,
+                           StreamObserver<DeleteUserResponse> responseObserver) {
+        try {
+            User user = userStore.get(request.getId());
+            if (user == null) {
+                responseObserver.onError(Status.NOT_FOUND
+                        .withDescription("User not found")
+                        .asRuntimeException());
+                return;
+            }
+            userStore.remove(request.getId());
+
+            responseObserver.onNext(DeleteUserResponse.newBuilder()
+                    .setMessage("User deleted successfully")
+                    .build());
+            responseObserver.onCompleted();
+
+        } catch (Exception e) {
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription("Error deleting user: " + e.getMessage())
                     .asRuntimeException());
         }
     }

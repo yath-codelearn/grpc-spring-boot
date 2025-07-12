@@ -4,10 +4,12 @@ A demonstration of gRPC-based microservices communication using Spring Boot and 
 
 ## Project Overview
 
-This project showcases a microservices architecture with gRPC for inter-service communication. It consists of two main services:
+This project showcases a microservices architecture with gRPC for inter-service communication. It consists of two main
+services:
 
 1. **Auth Service**: Handles user authentication and management
-2. **Customer Service**: Manages customer-related operations and demonstrates service-to-service communication with Auth Service
+2. **Customer Service**: Manages customer-related operations and demonstrates service-to-service communication with Auth
+   Service
 
 ## Prerequisites
 
@@ -54,41 +56,4 @@ grpc-demo/
 
 ## API Documentation
 
-### Auth Service gRPC API
-
-The Auth Service exposes the following gRPC endpoints:
-
-- **Create User**: `UserService/CreateUser`
-- **Get User**: `UserService/GetUser`
-- **Get All Users**: `UserService/GetAllUsers`
-- **Update User**: `UserService/UpdateUser`
-- **Delete User**: `UserService/DeleteUser`
-
-### Protocol Buffers
-
-The gRPC service definitions can be found in:
-- `auth-service/src/main/proto/user.proto`
-
-## Configuration
-
-### Auth Service
-
-Configuration file: `auth-service/src/main/resources/application.yml`
-
-### Customer Service
-
-Configuration file: `customer-service/src/main/resources/application.yml`
-
-## Development
-
-### Code Generation
-
-Protocol buffer code is automatically generated during the build process. After making changes to `.proto` files, run:
-
-```bash
-./gradlew generateProto
-
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+# To Test with swagger ui http://localhost:8080/swagger-ui/index.html
